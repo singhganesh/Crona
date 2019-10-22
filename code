@@ -1,0 +1,125 @@
+# importing speech recognition package from google api
+
+import os  # to save/open files
+import random
+import webbrowser
+from datetime import datetime
+import playsound  # to play saved mp3 file
+import speech_recognition as sr
+from gtts import gTTS  # google text to speech
+
+
+def wishMe():
+    time = int(datetime.now().hour)
+    if 0 <= time < 12:
+        assistant_speaks("Good Morning")
+
+    if 12 <= time < 16:
+        assistant_speaks("Good Afternoon")
+
+    if 16 <= time < 20:
+        assistant_speaks("Good Evening")
+
+    else:
+        assistant_speaks("Good Night")
+
+
+num = 1
+
+
+def assistant_speaks(output):
+    global num
+
+    # num to rename every audio file
+    # with different name to remove ambiguity
+    num += 1
+    print("Crona : ", output)
+
+    toSpeak = gTTS(text=output, lang='en', slow=False)
+    # saving the audio file given by google text to speech
+    file = str(num) + ".mp3"
+    toSpeak.save(file)
+
+    # playsound package is used to play the same file.
+    playsound.playsound(file, True)
+    os.remove(file)
+
+
+def get_audio():
+    rObject = sr.Recognizer()
+    audio = ' '
+
+    with sr.Microphone() as source:
+        print("Speak...")
+
+        # recording the audio using speech recognition
+        audio = rObject.listen(source, phrase_time_limit=2)
+    print("Stop...")  # limit 2 secs
+
+    try:
+
+        text = rObject.recognize_google(audio, language='en-US')
+        print("You : ", text)
+        return text
+
+    except:
+
+        assistant_speaks("Could not understand your audio, PLease try again !")
+        return 0
+
+
+# Driver Code
+"""def process_text(input):
+    pass"""
+
+if __name__ == "__main__":
+    wishMe()
+    assistant_speaks("Hello sir! I am Crona.")
+    assistant_speaks("Please tell me who are you ?")
+    name = ' '
+    name = get_audio()
+    assistant_speaks("Hello, " + name + '.')
+
+    while True:
+
+        assistant_speaks("What can i do for you?")
+        input = get_audio().lower()
+        # check1 print(text)
+
+        """if input == 0:
+            continue
+            process_text(input)
+        print("continue")"""
+        if "exit" in str(input) or "bye" in str(input):
+            assistant_speaks("Ok bye,Have a good day! " + name + '.')
+            break
+        if 'open youtube' in input:
+            assistant_speaks("okay! opening youtube...")
+            webbrowser.open('https://www.youtube.com/')
+
+        elif 'open google' in input:
+            assistant_speaks('okay! opening google...')
+            webbrowser.open('www.google.co.in')
+
+        elif "what\'s up" in input or 'how are you' in input:
+            stMsgs = ['Just doing my thing!', 'I am fine!', 'Nice!', 'I am nice and full of energy']
+            assistant_speaks(random.choice(stMsgs))
+
+        elif 'play music' in input:
+            assistant_speaks('Okay, here is your music! Enjoy!')
+            music_folder = "D:\music\\"
+            music = ['music1', 'music2', 'music3', 'music4']
+            random_music = music_folder + random.choice(music) + '.mp3'
+            os.system(random_music)
+
+        elif 'define' in input:
+            assistant_speaks('Hello!! My name is Crona.I am procedural desktop assistant.')
+            assistant_speaks('I am design to perform some predefined tasks.')
+
+
+        else:
+            assistant_speaks('command not found!')
+            assistant_speaks('Next Command! Sir!')
+
+            # calling process text to process the query
+            # print('check1...')
