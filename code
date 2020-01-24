@@ -3,10 +3,16 @@
 import os  # to save/open files
 import random
 import webbrowser
+from builtins import int, str
 from datetime import datetime
+
 import playsound  # to play saved mp3 file
 import speech_recognition as sr
+import wolframalpha
+import requests
 from gtts import gTTS  # google text to speech
+from pyttsx3 import driver
+from selenium import webdriver # to control browser operations
 
 
 def wishMe():
@@ -20,7 +26,7 @@ def wishMe():
     if 16 <= time < 20:
         assistant_speaks("Good Evening")
 
-    else:
+    if 20 <= time < 0:
         assistant_speaks("Good Night")
 
 
@@ -74,7 +80,7 @@ def get_audio():
 
 if __name__ == "__main__":
     wishMe()
-    assistant_speaks("Hello sir! I am Crona.")
+    assistant_speaks("Hello! I am Crona.")
     assistant_speaks("Please tell me who are you ?")
     name = ' '
     name = get_audio()
@@ -105,7 +111,7 @@ if __name__ == "__main__":
             stMsgs = ['Just doing my thing!', 'I am fine!', 'Nice!', 'I am nice and full of energy']
             assistant_speaks(random.choice(stMsgs))
 
-        elif 'play music' in input:
+        elif 'play music' in input or 'next track' in input:
             assistant_speaks('Okay, here is your music! Enjoy!')
             music_folder = "D:\music\\"
             music = ['music1', 'music2', 'music3', 'music4']
@@ -113,13 +119,53 @@ if __name__ == "__main__":
             os.system(random_music)
 
         elif 'define' in input:
-            assistant_speaks('Hello!! My name is Crona.I am procedural desktop assistant.')
+            assistant_speaks('Hello!! My name is Crona.I am desktop assistant.')
             assistant_speaks('I am design to perform some predefined tasks.')
 
+        elif 'search gtu' in input:
+            assistant_speaks('okay! Searching...')
+            webbrowser.open('https://www.gtu.ac.in/')
 
-        else:
+        elif 'task' in input:
+            assistant_speaks('My current tasks are,I can open google,Yahoo,Youtube,I can play music,I can launch applications like excel,powerpoint,paint.I am also perform some calculations')
+
+        elif "calculate" in input.lower():
+
+            # write your wolframalpha app_id here
+            app_id = "G62579-HYUE6V3ETY"
+            client = wolframalpha.Client(app_id)
+
+            indx = input.lower().split().index('calculate')
+            query = input.split()[indx + 1:]
+            res = client.query(' '.join(query))
+            answer = next(res.results).text
+            assistant_speaks("The answer is " + answer)
+
+        elif "open word" in input:
+            assistant_speaks("Opening Microsoft Word")
+            os.startfile('C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office\\Microsoft Office Word 2007.lnk')
+
+        elif "open paint" in input:
+            assistant_speaks("Opening paint")
+            os.startfile('C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Accessories\\Paint.lnk')
+
+        elif "open excel" in input:
+            assistant_speaks("Opening excel")
+            os.startfile('C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office\\Microsoft Office Excel 2007.lnk')
+
+        elif "open powerpoint" in input:
+            assistant_speaks("Opening powerpoint")
+            os.startfile('C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office\\Microsoft Office PowerPoint 2007.lnk')
+
+        """elif 'visit' in input:
+
+            indx = input.lower().split().index('google')
+            query = input.split()[indx + 1:]
+            driver.get("https://www.google.com/search?q =" + '+'.join(query))"""
+
+else:
             assistant_speaks('command not found!')
-            assistant_speaks('Next Command! Sir!')
+            assistant_speaks('Next Command! please!')
 
             # calling process text to process the query
             # print('check1...')
